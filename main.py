@@ -12,10 +12,12 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
+        self.all_sprites = None
+        self.playing = False
 
     def new(self):
         # ゲームオーバー後のニューゲーム
-        all_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.Group()
 
     def run(self):
         # ゲームループ
@@ -28,15 +30,20 @@ class Game:
 
     def update(self):
         # アップデート
-        pass
+        self.all_sprites.update()
 
     def events(self):
         # イベント
-        pass
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                if self.playing:
+                    self.playing = False
+                self.running = False
 
     def draw(self):
         # 描画
-        pass
+        self.screen.fill(BLACK)
+        self.all_sprites.draw(self.screen)
 
     def show_start_screen(self):
         # ゲームスタート画面
