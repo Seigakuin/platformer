@@ -34,5 +34,12 @@ class Player(pg.sprite.Sprite):
         self.vel += self.acc
         # Position に Velocity を足す
         self.pos += self.vel + 0.5 * self.acc
+
+        # Check Edges
+        if self.pos.x > WIDTH:
+            self.pos.x = 0
+        if self.pos.x < 0:
+            self.pos.x = WIDTH
+
         # 現在の位置に Positionを設定
         self.rect.center = self.pos
