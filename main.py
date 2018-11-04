@@ -1,33 +1,46 @@
-import pygame
+import pygame as pg
 import random
 from settings import *
 
-# initialize pygame and create window
-pygame.init()
-pygame.mixer.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption(TITLE)
-clock = pygame.time.Clock()
 
-all_sprites = pygame.sprite.Group()
+class Game:
+    def __init__(self):
+        # ゲームを初期化
+        self.running = True
 
-# Game Loop
-running = True
-while running:
-    # keep loop running at the right speed
-    clock.tick(FPS)
-    # Process input (events)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+    def new(self):
+        # ゲームオーバー後のニューゲーム
+        pass
 
-    # update
-    all_sprites.update()
+    def run(self):
+        # ゲームループ
+        pass
 
-    # Draw / render
-    screen.fill(BLACK)
-    all_sprites.draw(screen)
+    def update(self):
+        # アップデート
+        pass
 
-    pygame.display.flip()
+    def events(self):
+        # イベント
+        pass
 
-pygame.quit()
+    def draw(self):
+        # 描画
+        pass
+
+    def show_start_screen(self):
+        # ゲームスタート画面
+        pass
+
+    def show_go_screen(self):
+        # ゲームオーバー画面
+        pass
+
+
+g = Game()
+g.show_start_screen()
+while g.running:
+    g.new()
+    g.show_go_screen()
+
+pg.quit()
