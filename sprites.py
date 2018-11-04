@@ -21,7 +21,8 @@ class Player(pg.sprite.Sprite):
         self.vy = 0
 
     def update(self):
-        self.acc = vec(0, 0)
+        # 重力を足す
+        self.acc = vec(0, 0.5)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
             self.acc.x = -PLAYER_ACC
