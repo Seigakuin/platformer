@@ -23,7 +23,8 @@ class Game:
         # ゲームオーバー後のニューゲーム
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
-        self.player = Player()
+
+        self.player = Player(self)
         self.all_sprites.add(self.player)
 
         p1 = Platform(0, HEIGHT - 40, WIDTH, 40)

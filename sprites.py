@@ -7,8 +7,9 @@ vec = pg.math.Vector2
 
 # noinspection PyArgumentList
 class Player(pg.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, game):
         super().__init__()
+        self.game = game
         self.image = pg.Surface((30, 40))
         self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
@@ -18,8 +19,12 @@ class Player(pg.sprite.Sprite):
         self.acc = vec(0, 0)
 
     def jump(self):
-
-        self.vel.y = -20
+        # jump only if on a platform
+        self.rect.x += 1
+        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        self.rect.x -= 1
+        if hits:
+            self.vel.y = -20
 
     def update(self):
         # 重力の設定
