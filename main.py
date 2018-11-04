@@ -7,14 +7,24 @@ class Game:
     def __init__(self):
         # ゲームを初期化
         self.running = True
+        pg.init()
+        pg.mixer.init()
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        pg.display.set_caption(TITLE)
+        self.clock = pg.time.Clock()
 
     def new(self):
         # ゲームオーバー後のニューゲーム
-        pass
+        all_sprites = pg.sprite.Group()
 
     def run(self):
         # ゲームループ
-        pass
+        self.playing = True
+        while self.playing:
+            self.clock.tick(FPS)
+            self.events()
+            self.update()
+            self.draw()
 
     def update(self):
         # アップデート

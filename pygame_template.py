@@ -1,11 +1,5 @@
 # initialize pygame and create window
-pg.init()
-pg.mixer.init()
-screen = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption(TITLE)
-clock = pg.time.Clock()
 
-all_sprites = pg.sprite.Group()
 
 # Game Loop
 running = True
