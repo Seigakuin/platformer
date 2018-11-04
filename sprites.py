@@ -24,11 +24,15 @@ class Player(pg.sprite.Sprite):
         self.acc = vec(0, 0)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
-            self.acc.x = -0.5
+            self.acc.x = -PLAYER_ACC
         if keys[pg.K_RIGHT]:
-            self.acc.x = 0.5
+            self.acc.x = PLAYER_ACC
 
+        # 摩擦を計算
+        self.acc += self.vel * PLAYER_FRICTION
+        # Velocity に Accelerationを足す
         self.vel += self.acc
+        # Position に Velocity を足す
         self.pos += self.vel + 0.5 * self.acc
-
+        # 現在の位置に Positionを設定
         self.rect.center = self.pos
