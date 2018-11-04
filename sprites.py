@@ -21,7 +21,6 @@ class Player(pg.sprite.Sprite):
         self.vy = 0
 
     def update(self):
-        # 重力を足す
         self.acc = vec(0, 0.5)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
@@ -30,7 +29,7 @@ class Player(pg.sprite.Sprite):
             self.acc.x = PLAYER_ACC
 
         # 摩擦を計算
-        self.acc += self.vel * PLAYER_FRICTION
+        self.acc.x += self.vel.x * PLAYER_FRICTION
         # Velocity に Accelerationを足す
         self.vel += self.acc
         # Position に Velocity を足す
@@ -43,4 +42,14 @@ class Player(pg.sprite.Sprite):
             self.pos.x = WIDTH
 
         # 現在の位置に Positionを設定
-        self.rect.center = self.pos
+        self.rect.midbottom = self.pos
+
+
+class Platform(pg.sprite.Sprite):
+    def __init__(self, x, y, w, h):
+        super().__init__()
+        self.image = pg.Surface((w, h))
+        self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
