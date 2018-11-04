@@ -1,6 +1,7 @@
 import pygame as pg
 import random
 from settings import *
+from sprites import *
 
 
 class Game:
@@ -15,9 +16,14 @@ class Game:
         self.all_sprites = None
         self.playing = False
 
+        self.player = None
+
     def new(self):
         # ゲームオーバー後のニューゲーム
         self.all_sprites = pg.sprite.Group()
+        self.player = Player()
+        self.all_sprites.add(self.player)
+        self.run()
 
     def run(self):
         # ゲームループ
@@ -44,6 +50,7 @@ class Game:
         # 描画
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        pg.display.flip()
 
     def show_start_screen(self):
         # ゲームスタート画面
