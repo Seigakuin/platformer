@@ -116,6 +116,8 @@ class Game:
 
     def show_go_screen(self):
         # ゲームオーバー画面
+        if not self.running:
+            return
         self.screen.fill(BGCOLOR)
         self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Score: {}".format(str(self.score)), 22, WHITE,
