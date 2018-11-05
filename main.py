@@ -16,11 +16,13 @@ class Game:
         self.all_sprites = None
         self.platforms = None
         self.playing = False
-
         self.player = None
+
+        self.font_name = pg.font.match_font(FONT_NAME)  # FONTを探す
 
     def new(self):
         # ゲームオーバー後のニューゲーム
+        self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
 
@@ -60,6 +62,7 @@ class Game:
                 # 画面外に行ったplatformを消す
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
+                    self.score += 10
 
         # ゲームオーバー
         # 落下を表現
@@ -97,6 +100,7 @@ class Game:
         # 描画
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        self.draw_text(str(self.score), 22, WHITE, WIDTH / 2, 15)
         pg.display.flip()
 
     def show_start_screen(self):
@@ -106,6 +110,13 @@ class Game:
     def show_go_screen(self):
         # ゲームオーバー画面
         pass
+
+    def draw_text(self, text, size, color, x, y):
+        font = pg.font.Font(self.font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        self.screen.blit(text_surface, text_rect)
 
 
 g = Game()

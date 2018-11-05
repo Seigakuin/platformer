@@ -3,6 +3,7 @@ TITLE = "Jumpy!"
 WIDTH = 480
 HEIGHT = 600
 FPS = 60
+FONT_NAME = 'arial'
 
 # Player properties
 PLAYER_ACC = 0.5
