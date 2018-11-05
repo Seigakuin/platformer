@@ -116,7 +116,15 @@ class Game:
 
     def show_go_screen(self):
         # ゲームオーバー画面
-        pass
+        self.screen.fill(BGCOLOR)
+        self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Score: {}".format(str(self.score)), 22, WHITE,
+                       WIDTH / 2,
+                       HEIGHT / 2)
+        self.draw_text("Press a key to play again", 22, WHITE, WIDTH / 2,
+                       HEIGHT * 3 / 4)
+        pg.display.flip()
+        self.wait_for_key()
 
     def wait_for_key(self):
         waiting = True
