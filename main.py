@@ -2,6 +2,7 @@ import pygame as pg
 import random
 from settings import *
 from sprites import *
+from os import path
 
 
 class Game:
@@ -19,6 +20,16 @@ class Game:
         self.player = None
 
         self.font_name = pg.font.match_font(FONT_NAME)  # FONTを探す
+        self.load_data()
+
+    def load_data(self):
+        # HighScoreデータをロード
+        self.dir = path.dirname(__file__)
+        with open(path.join(self.dir, HS_FILE), 'w') as f:
+            try:
+                self.highscore = int(f.read())
+            except:
+                self.highscore = 0
 
     def new(self):
         # ゲームオーバー後のニューゲーム
@@ -111,6 +122,8 @@ class Game:
                        HEIGHT / 2)
         self.draw_text("Press a key to play", 22, WHITE, WIDTH / 2,
                        HEIGHT * 3 / 4)
+        self.draw_text("HIGH SCORE: {}".format(str(self.highscore)), 22, WHITE,
+                       WIDTH / 2, 15)
         pg.display.flip()
         self.wait_for_key()
 
