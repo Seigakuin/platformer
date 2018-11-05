@@ -51,11 +51,25 @@ class Game:
             if hits:
                 self.player.pos.y = hits[0].rect.top + 1
                 self.player.vel.y = 0
+
         # もしplayerが画面上部1/4に達したら
         if self.player.rect.top <= HEIGHT / 4:
             self.player.pos.y += abs(self.player.vel.y)  # abs = 絶対値を取得
             for plat in self.platforms:
                 plat.rect.y += abs(self.player.vel.y)
+                # 画面外に行ったplatformを消す
+                if plat.rect.top >= HEIGHT:
+                    plat.kill()
+
+        # 新しいplatform を作成 / 画面には平均的に同じ数のplatform
+        while len(self.platforms) < 6:
+            width = random.randrange(50, 100)
+
+            p = Platform(random.randrange(0, WIDTH - width),
+                         random.randrange(-75, -30),
+                         width, 20)
+            self.platforms.add(p)
+            self.all_sprites.add(p)
 
     def events(self):
         # イベント
