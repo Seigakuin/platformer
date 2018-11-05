@@ -51,6 +51,11 @@ class Game:
             if hits:
                 self.player.pos.y = hits[0].rect.top + 1
                 self.player.vel.y = 0
+        # もしplayerが画面上部1/4に達したら
+        if self.player.rect.top <= HEIGHT / 4:
+            self.player.pos.y += abs(self.player.vel.y)  # abs = 絶対値を取得
+            for plat in self.platforms:
+                plat.rect.y += abs(self.player.vel.y)
 
     def events(self):
         # イベント
