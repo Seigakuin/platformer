@@ -19,6 +19,7 @@ class Game:
         self.playing = False
         self.player = None
         self.highscore = 0
+        self.dir = None
 
         self.font_name = pg.font.match_font(FONT_NAME)  # FONTを探す
         self.load_data()
@@ -26,7 +27,7 @@ class Game:
     def load_data(self):
         # HighScoreデータをロード
         self.dir = path.dirname(__file__)
-        with open(path.join(self.dir, HS_FILE), 'w') as f:
+        with open(path.join(self.dir, HS_FILE), 'r') as f:
             try:
                 self.highscore = int(f.read())
             except:
