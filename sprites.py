@@ -24,7 +24,7 @@ class Player(pg.sprite.Sprite):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
         if hits:
-            self.vel.y = -20
+            self.vel.y = -PLAYER_JUMP
 
     def update(self):
         # 重力の設定

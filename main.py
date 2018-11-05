@@ -61,6 +61,17 @@ class Game:
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
 
+        # ゲームオーバー
+        # 落下を表現
+        if self.player.rect.bottom > HEIGHT:
+            # 全てのsprite
+            for sprite in self.all_sprites:
+                sprite.rect.y -= max(self.player.vel.y, 10)  # max値を取得
+                if sprite.rect.bottom < 0:  # spriteが画面上部に消えたら
+                    sprite.kill()
+        if len(self.platforms) == 0:
+            self.playing = False
+
         # 新しいplatform を作成 / 画面には平均的に同じ数のplatform
         while len(self.platforms) < 6:
             width = random.randrange(50, 100)
