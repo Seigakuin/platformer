@@ -18,6 +18,7 @@ class Game:
         self.platforms = None
         self.playing = False
         self.player = None
+        self.highscore = 0
 
         self.font_name = pg.font.match_font(FONT_NAME)  # FONTを探す
         self.load_data()
@@ -138,6 +139,18 @@ class Game:
                        HEIGHT / 2)
         self.draw_text("Press a key to play again", 22, WHITE, WIDTH / 2,
                        HEIGHT * 3 / 4)
+        if self.score > self.highscore:
+            self.highscore = self.score
+            self.draw_text("NEW HIGH SCORE!", 22, WHITE, WIDTH / 2,
+                           HEIGHT / 2 + 40)
+            with open(path.join(self.dir, HS_FILE), 'w') as f:
+                f.write(str(self.score))
+                print("finished writing")
+        else:
+            self.draw_text("HIGH SCORE: {}".format(str(self.highscore)), 22,
+                           WHITE,
+                           WIDTH / 2, HEIGHT / 2 + 40)
+
         pg.display.flip()
         self.wait_for_key()
 
