@@ -105,11 +105,29 @@ class Game:
 
     def show_start_screen(self):
         # ゲームスタート画面
-        pass
+        self.screen.fill(BGCOLOR)
+        self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Arrows to move, Space to jump", 22, WHITE, WIDTH / 2,
+                       HEIGHT / 2)
+        self.draw_text("Press a key to play", 22, WHITE, WIDTH / 2,
+                       HEIGHT * 3 / 4)
+        pg.display.flip()
+        self.wait_for_key()
 
     def show_go_screen(self):
         # ゲームオーバー画面
         pass
+
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.running = False
+                if event.type == pg.KEYUP:
+                    waiting = False
 
     def draw_text(self, text, size, color, x, y):
         font = pg.font.Font(self.font_name, size)
