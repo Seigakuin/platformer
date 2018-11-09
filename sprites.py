@@ -90,10 +90,10 @@ class Player(pg.sprite.Sprite):
         self.pos += self.vel + 0.5 * self.acc
 
         # Check Edges
-        if self.pos.x > WIDTH:
-            self.pos.x = 0
-        if self.pos.x < 0:
-            self.pos.x = WIDTH
+        if self.pos.x > WIDTH + self.rect.width / 2:
+            self.pos.x = 0 - self.rect.width / 2
+        if self.pos.x < 0 - self.rect.width / 2:
+            self.pos.x = WIDTH + self.rect.width / 2
 
         # 現在の位置に Positionを設定
         self.rect.midbottom = self.pos
