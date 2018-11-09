@@ -5,9 +5,21 @@ from sprites import *
 from os import path
 
 
+class SpriteSheet:
+    def __init__(self, filename):
+        """ SpriteSheet専用クラス"""
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        """ spritesheetの中の特定の画像を切り取る """
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        return image
+
+
 class Game:
     def __init__(self):
-        # ゲームを初期化
+        """ ゲームを初期化 """
         self.running = True
         pg.init()
         pg.mixer.init()
@@ -18,20 +30,25 @@ class Game:
         self.platforms = None
         self.playing = False
         self.player = None
+        self.score = 0
         self.highscore = 0
         self.dir = None
+        self.spritesheet = None
 
         self.font_name = pg.font.match_font(FONT_NAME)  # FONTを探す
         self.load_data()
 
     def load_data(self):
-        # HighScoreデータをロード
+        """ HighScoreデータをロード """
         self.dir = path.dirname(__file__)
+        img_dir = path.join(self.dir, 'img')
         with open(path.join(self.dir, HS_FILE), 'r') as f:
             try:
                 self.highscore = int(f.read())
             except:
                 self.highscore = 0
+        # spritesheetをロード
+        self.spritesheet = SpriteSheet(path.join(img_dir, SPRITESHEET))
 
     def new(self):
         # ゲームオーバー後のニューゲーム
