@@ -14,6 +14,7 @@ class SpriteSheet:
         """ spritesheetの中の特定の画像を切り取る """
         image = pg.Surface((width, height))
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        image = pg.transform.scale(image, (width // 2, height // 2))
         return image
 
 

@@ -11,6 +11,7 @@ class Player(pg.sprite.Sprite):
         super().__init__()
         self.game = game
         self.image = self.game.spritesheet.get_image(614, 1063, 120, 191)
+        self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH / 2, HEIGHT / 2)
         self.pos = vec(WIDTH / 2, HEIGHT / 2)
