@@ -81,6 +81,11 @@ class Player(pg.sprite.Sprite):
         self.acc.x += self.vel.x * PLAYER_FRICTION
         # Velocity に Accelerationを足す
         self.vel += self.acc
+
+        # 微かな動きを止める
+        if abs(self.vel.x) < 0.1:
+            self.vel.x = 0
+
         # Position に Velocity を足す
         self.pos += self.vel + 0.5 * self.acc
 
