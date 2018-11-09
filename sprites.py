@@ -96,12 +96,33 @@ class Player(pg.sprite.Sprite):
     def animate(self):
         """アニメーション"""
         now = pg.time.get_ticks()  # 現在のtick(時間)を取得
+        if self.vel.x != 0:
+            self.walking = True
+        else:
+            self.walking = False
+
+        # 歩くアニメーション
+        if self.walking:
+            if now - self.last_update > 200:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(
+                    self.walk_frames_l)  # フレーム画像の配列番号を計算
+                bottom = self.rect.bottom
+                if self.vel.x > 0:
+                    self.image = self.walk_frames_r[self.current_frame]
+                else:
+                    self.image = self.walk_frames_l[self.current_frame]
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+
+        # アイドルアニメーション
         if not self.jumping and not self.walking:
             if now - self.last_update > 350:  # 現在と最後にupdateした時間を比較
                 self.last_update = now  # もしそうだったらlast_updateをnow(現在)に設定
                 self.current_frame = (self.current_frame + 1) % len(
                     self.standing_frames)  # フレーム画像の配列番号を計算
-                bottom = self.rect.bottom
+                bottom = self.rect.bottom  # フレームごとにimageのサイズが変更になるかもしれないから
+                # 地面に必ず足がついているように画像が変更になる前のbottom を取得
                 self.image = self.standing_frames[
                     self.current_frame]  # imageを計算したフレームに画像に変更
                 self.rect = self.image.get_rect()  # rectを新たに取得
