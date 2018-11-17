@@ -35,6 +35,8 @@ class Game:
         self.highscore = 0
         self.dir = None
         self.spritesheet = None
+        self.jump_sound = None
+        self.snd_dir = None
 
         self.font_name = pg.font.match_font(FONT_NAME)  # FONTを探す
         self.load_data()
@@ -50,6 +52,9 @@ class Game:
                 self.highscore = 0
         # spritesheetをロード
         self.spritesheet = SpriteSheet(path.join(img_dir, SPRITESHEET))
+        # load sound
+        self.snd_dir = path.join(self.dir, 'snd')
+        self.jump_sound = pg.mixer.Sound(path.join(self.snd_dir, 'Jump33.wav'))
 
     def new(self):
         # ゲームオーバー後のニューゲーム
@@ -64,16 +69,22 @@ class Game:
             p = Platform(self, *plat)
             self.all_sprites.add(p)
             self.platforms.add(p)
+        # 音楽を読み込む
+        if self.snd_dir:
+            pg.mixer.music.load(path.join(self.snd_dir, "Happy Tune.ogg"))
         self.run()
 
     def run(self):
         # ゲームループ
+        # 音楽を再生 (-1 はループ)
+        pg.mixer.music.play(loops=-1)
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
+        pg.mixer.music.fadeout(500)
 
     def update(self):
         # アップデート
@@ -149,6 +160,9 @@ class Game:
 
     def show_start_screen(self):
         # ゲームスタート画面
+        # 音楽
+        pg.mixer.music.load(path.join(self.snd_dir, "Yippee.ogg"))
+        pg.mixer.music.play(loops=-1)
         self.screen.fill(BGCOLOR)
         self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Arrows to move, Space to jump", 22, WHITE, WIDTH / 2,
@@ -159,11 +173,14 @@ class Game:
                        WIDTH / 2, 15)
         pg.display.flip()
         self.wait_for_key()
+        pg.mixer.music.fadeout(500)
 
     def show_go_screen(self):
         # ゲームオーバー画面
         if not self.running:
             return
+        pg.mixer.music.load(path.join(self.snd_dir, "Yippee.ogg"))
+        pg.mixer.music.play(loops=-1)
         self.screen.fill(BGCOLOR)
         self.draw_text("GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Score: {}".format(str(self.score)), 22, WHITE,
@@ -185,6 +202,7 @@ class Game:
 
         pg.display.flip()
         self.wait_for_key()
+        pg.mixer.music.fadeout(500)
 
     def wait_for_key(self):
         waiting = True
