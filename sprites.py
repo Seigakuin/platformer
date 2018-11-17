@@ -60,12 +60,18 @@ class Player(pg.sprite.Sprite):
         self.jump_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
         self.jump_frame.set_colorkey((0, 0, 0))
 
+    def jump_cut(self):
+        if self.jumping:
+            if self.vel.y < -3:
+                self.vel.y = -3
+
     def jump(self):
         # jump only if on a platform
         self.rect.y += 2
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.y -= 2
-        if hits:
+        if hits and not self.jumping:
+            self.jumping = True
             self.vel.y = -PLAYER_JUMP
 
     def update(self):
