@@ -54,21 +54,21 @@ class Game:
         self.spritesheet = SpriteSheet(path.join(img_dir, SPRITESHEET))
         # load sound
         self.snd_dir = path.join(self.dir, 'snd')
-        self.jump_sound = pg.mixer.Sound(path.join(self.snd_dir, 'Jump33.wav'))
+        self.jump_sound = pg.mixer.Sound(
+            path.join(self.snd_dir, 'Jump33.wav'))
+        self.jump_sound.set_volume(0.1)
 
     def new(self):
         # ゲームオーバー後のニューゲーム
         self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        self.powerups = pg.sprite.Group()
 
         self.player = Player(self)
-        self.all_sprites.add(self.player)
 
         for plat in PLATFORM_LIST:
-            p = Platform(self, *plat)
-            self.all_sprites.add(p)
-            self.platforms.add(p)
+            Platform(self, *plat)
         # 音楽を読み込む
         if self.snd_dir:
             pg.mixer.music.load(path.join(self.snd_dir, "Happy Tune.ogg"))
@@ -78,6 +78,7 @@ class Game:
         # ゲームループ
         # 音楽を再生 (-1 はループ)
         pg.mixer.music.play(loops=-1)
+        pg.mixer.music.set_volume(0.3)
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
@@ -99,11 +100,14 @@ class Game:
                 for hit in hits:
                     if hit.rect.bottom > lowest.rect.bottom:
                         lowest = hit
-                # 足が次の地面よりも高い位置にある場合のみに飛び移れる
-                if self.player.pos.y < lowest.rect.centery:
-                    self.player.pos.y = lowest.rect.top
-                    self.player.vel.y = 0
-                    self.player.jumping = False
+
+                # 空中に立っているバグを修正
+                if lowest.rect.right + 10 > self.player.pos.x > lowest.rect.left - 10:
+                    # 足が次の地面よりも高い位置にある場合のみに飛び移れる
+                    if self.player.pos.y < lowest.rect.centery:
+                        self.player.pos.y = lowest.rect.top
+                        self.player.vel.y = 0
+                        self.player.jumping = False
 
         # もしplayerが画面上部1/4に達したら
         if self.player.rect.top <= HEIGHT / 4:
@@ -130,10 +134,8 @@ class Game:
         while len(self.platforms) < 6:
             width = random.randrange(50, 100)
 
-            p = Platform(self, random.randrange(0, WIDTH - width),
-                         random.randrange(-75, -30))
-            self.platforms.add(p)
-            self.all_sprites.add(p)
+            Platform(self, random.randrange(0, WIDTH - width),
+                     random.randrange(-75, -30))
 
     def events(self):
         # イベント
@@ -163,6 +165,7 @@ class Game:
         # 音楽
         pg.mixer.music.load(path.join(self.snd_dir, "Yippee.ogg"))
         pg.mixer.music.play(loops=-1)
+        pg.mixer.music.set_volume(0.05)
         self.screen.fill(BGCOLOR)
         self.draw_text(TITLE, 48, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Arrows to move, Space to jump", 22, WHITE, WIDTH / 2,

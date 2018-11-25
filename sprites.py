@@ -9,7 +9,8 @@ vec = pg.math.Vector2
 # noinspection PyArgumentList
 class Player(pg.sprite.Sprite):
     def __init__(self, game):
-        super().__init__()
+        self.groups = game.all_sprites
+        super().__init__(self.groups)
         self.game = game
         self.walking = False
         self.jumping = False
@@ -144,7 +145,8 @@ class Player(pg.sprite.Sprite):
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y):
-        super().__init__()
+        self.groups = game.all_sprites, game.platforms
+        super().__init__(self.groups)
         self.game = game
         # spritesheetから地面の画像を２つ取得
         images = [self.game.spritesheet.get_image(0, 288, 380, 94),
@@ -154,3 +156,22 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+
+class Pow(pg.sprite.Sprite):
+    def __init__(self, game, plat):
+        self.groups = game.all_sprites, game.powerups
+        super().__init__(self.groups)
+        self.game = game
+        self.plat = plat
+        self.type = random.choice(['boost'])
+        self.image = self.game.spritesheet.get_image(820, 1805, 71, 70)
+        self.image.set_colorkey((0, 0, 0))  # 背景を消す
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.plat.rect.centerx
+        self.rect.bottom = self.plat.rect.top - 5
+
+    def update(self):
+        self.rect.bottom = self.plat.rect.top - 5
+        if not self.game.platforms.has(self.plat):
+            self.kill()
