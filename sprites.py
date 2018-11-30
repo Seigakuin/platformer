@@ -235,3 +235,23 @@ class Mob(pg.sprite.Sprite):
         self.rect.y += self.vy
         if self.rect.left > WIDTH + 100 or self.rect.right < -100:
             self.kill()
+
+
+class Cloud(pg.sprite.Sprite):
+    def __init__(self, game):
+        self._layer = CLOUD_LAYER
+        self.groups = game.all_sprites, game.clouds
+        super().__init__(self.groups)
+        self.game = game
+        self.image = random.choice(self.game.cloud_images)
+        self.image.set_colorkey((0, 0, 0))
+        self.rect = self.image.get_rect()
+        scale = random.randrange(50, 101) / 100
+        self.image = pg.transform.scale(self.image, (
+            int(self.rect.width * scale), int(self.rect.height * scale)))
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-500, -50)
+
+    def update(self, *args):
+        if self.rect.top > HEIGHT * 2:  # 落ちて行くときも雲がある
+            self.kill()

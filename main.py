@@ -39,6 +39,14 @@ class Game:
                 self.highscore = 0
         # spritesheetをロード
         self.spritesheet = SpriteSheet(path.join(img_dir, SPRITESHEET))
+
+        # load clouds
+        self.cloud_images = []
+        for i in range(1, 4):
+            self.cloud_images.append(
+                pg.image.load(
+                    path.join(img_dir, 'cloud{}.png'.format(i))).convert())
+
         # load sound
         self.snd_dir = path.join(self.dir, 'snd')
         self.jump_sound = pg.mixer.Sound(
@@ -55,6 +63,7 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
+        self.clouds = pg.sprite.Group()
 
         self.player = Player(self)
 
@@ -67,6 +76,9 @@ class Game:
         # 音楽を読み込む
         if self.snd_dir:
             pg.mixer.music.load(path.join(self.snd_dir, "Happy Tune.ogg"))
+        for i in range(8):
+            c = Cloud(self)
+            c.rect.y += 500
         self.run()
 
     def run(self):
@@ -121,7 +133,15 @@ class Game:
 
         # もしplayerが画面上部1/4に達したら
         if self.player.rect.top <= HEIGHT / 4:
+            # 低い確率でCloudを作成
+            if random.randrange(100) < CLOUD_FREQ:
+                Cloud(self)
+
             self.player.pos.y += max(abs(self.player.vel.y), 2)  # abs = 絶対値を取得
+
+            for cloud in self.clouds:
+                # 雲は背景だからゆっくり降りていく
+                cloud.rect.y += max(abs(self.player.vel.y / 2), 2)
 
             # mob もplayerの移動とともに下に移動するように
             for mob in self.mobs:
