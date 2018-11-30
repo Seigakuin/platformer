@@ -9,6 +9,7 @@ vec = pg.math.Vector2
 # noinspection PyArgumentList
 class Player(pg.sprite.Sprite):
     def __init__(self, game):
+        self._layer = PLAYER_LAYER
         self.groups = game.all_sprites
         super().__init__(self.groups)
         self.game = game
@@ -145,6 +146,7 @@ class Player(pg.sprite.Sprite):
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y):
+        self._layer = PLATFORM_LAYER
         self.groups = game.all_sprites, game.platforms
         super().__init__(self.groups)
         self.game = game
@@ -156,10 +158,13 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        if random.randrange(100) < POW_SPAWN_PCT:
+            Pow(self.game, self)
 
 
 class Pow(pg.sprite.Sprite):
     def __init__(self, game, plat):
+        self._layer = POW_LAYER
         self.groups = game.all_sprites, game.powerups
         super().__init__(self.groups)
         self.game = game
@@ -174,4 +179,41 @@ class Pow(pg.sprite.Sprite):
     def update(self):
         self.rect.bottom = self.plat.rect.top - 5
         if not self.game.platforms.has(self.plat):
+            self.kill()
+
+
+class Mob(pg.sprite.Sprite):
+    def __init__(self, game):
+        self._layer = MOB_LAYER
+        self.groups = game.all_sprites, game.mobs
+        super().__init__(self.groups)
+        self.game = game
+        self.image_up = self.game.spritesheet.get_image(566, 510, 122, 139)
+        self.image_up.set_colorkey((0, 0, 0))
+        self.image_down = self.game.spritesheet.get_image(568, 1534, 122, 139)
+        self.image_down.set_colorkey((0, 0, 0))
+        self.image = self.image_up
+        self.rect = self.image.get_rect()
+        self.rect.centerx = random.choice([-100, WIDTH + 100])
+        self.vx = random.randrange(1, 4)
+        if self.rect.centerx > WIDTH:
+            self.vx *= -1
+        self.rect.y = random.randrange(HEIGHT / 2)
+        self.vy = 0
+        self.dy = 0.5
+
+    def update(self):
+        self.rect.x += self.vx
+        self.vy += self.dy
+        if self.vy > 3 or self.vy < -3:
+            self.dy *= -1
+        center = self.rect.center
+        if self.dy < 0:
+            self.image = self.image_up
+        else:
+            self.image = self.image_down
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.rect.y += self.vy
+        if self.rect.left > WIDTH + 100 or self.rect.right < -100:
             self.kill()

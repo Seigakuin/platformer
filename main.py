@@ -57,18 +57,26 @@ class Game:
         self.jump_sound = pg.mixer.Sound(
             path.join(self.snd_dir, 'Jump33.wav'))
         self.jump_sound.set_volume(0.1)
+        self.boost_sound = pg.mixer.Sound(
+            path.join(self.snd_dir, 'Boost16.wav'))
+        self.boost_sound.set_volume(0.1)
 
     def new(self):
         # ゲームオーバー後のニューゲーム
         self.score = 0
-        self.all_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.LayeredUpdates()  # sprite が描かれる順番を指定できるようになる
         self.platforms = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
+        self.mobs = pg.sprite.Group()
 
         self.player = Player(self)
 
         for plat in PLATFORM_LIST:
             Platform(self, *plat)
+
+        # mob を作成した時間を記録
+        self.mob_timer = 0
+
         # 音楽を読み込む
         if self.snd_dir:
             pg.mixer.music.load(path.join(self.snd_dir, "Happy Tune.ogg"))
@@ -90,6 +98,19 @@ class Game:
     def update(self):
         # アップデート
         self.all_sprites.update()
+
+        # mob を作成
+        now = pg.time.get_ticks()
+        if now - self.mob_timer > 5000 + random.choice(
+                [-1000, -500, 0, 500, 1000]):
+            self.mob_timer = now
+            Mob(self)
+
+        # hit mobs?
+        mob_hits = pg.sprite.spritecollide(self.player, self.mobs, False)
+        if mob_hits:
+            self.playing = False
+
         # check if player hits a platform - only if falling
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
@@ -112,12 +133,24 @@ class Game:
         # もしplayerが画面上部1/4に達したら
         if self.player.rect.top <= HEIGHT / 4:
             self.player.pos.y += max(abs(self.player.vel.y), 2)  # abs = 絶対値を取得
+
+            # mob もplayerの移動とともに下に移動するように
+            for mob in self.mobs:
+                mob.rect.y += max(abs(self.player.vel.y), 2)
             for plat in self.platforms:
                 plat.rect.y += max(abs(self.player.vel.y), 2)
                 # 画面外に行ったplatformを消す
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
                     self.score += 10
+
+        # もしPOWERUPにあたったら
+        pow_hits = pg.sprite.spritecollide(self.player, self.powerups, True)
+        for pow in pow_hits:
+            if pow.type == 'boost':
+                self.boost_sound.play()
+                self.player.vel.y = -BOOST_POWER
+                self.player.jumping = False
 
         # ゲームオーバー
         # 落下を表現
@@ -156,7 +189,8 @@ class Game:
         # 描画
         self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
-        self.screen.blit(self.player.image, self.player.rect)
+        # LAYERのおかげで画面にblitをしなくて良くなる
+        # self.screen.blit(self.player.image, self.player.rect)
         self.draw_text(str(self.score), 22, WHITE, WIDTH / 2, 15)
         pg.display.flip()
 
