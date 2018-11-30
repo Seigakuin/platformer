@@ -6,6 +6,19 @@ import random
 vec = pg.math.Vector2
 
 
+class SpriteSheet:
+    def __init__(self, filename):
+        """ SpriteSheet専用クラス"""
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        """ spritesheetの中の特定の画像を切り取る """
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        image = pg.transform.scale(image, (width // 2, height // 2))
+        return image
+
+
 # noinspection PyArgumentList
 class Player(pg.sprite.Sprite):
     def __init__(self, game):
@@ -143,6 +156,9 @@ class Player(pg.sprite.Sprite):
                 self.rect = self.image.get_rect()  # rectを新たに取得
                 self.rect.bottom = bottom  # rectのbottomを更新
 
+        # 衝突判定用のマスク
+        self.mask = pg.mask.from_surface(self.image)
+
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -212,6 +228,8 @@ class Mob(pg.sprite.Sprite):
             self.image = self.image_up
         else:
             self.image = self.image_down
+        # 衝突判定用のマスク
+        self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.center = center
         self.rect.y += self.vy
